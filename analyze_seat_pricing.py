@@ -4,6 +4,7 @@ STRICT ZERO-SYNTHETIC DATA RULE:
 - Accurately targets the modal popup and clicks 'Let Me Choose Myself'
 - Loads the full interactive aircraft cabin seat map
 - Extracts 100% genuine DOM seat numbers and live seat inventory
+- Saves all artifacts into a timestamped folder (runs/YYYY-MM-DD_HH-MM-SS_<prefix>/)
 """
 
 import os
@@ -12,7 +13,10 @@ import io
 import re
 import json
 import argparse
+from datetime import datetime
 from playwright.sync_api import sync_playwright
+
+from airgo.utils.run_manager import create_run_directory, save_run_artifact
 
 # Fix Windows terminal UTF-8 encoding
 if sys.stdout.encoding != "utf-8":
@@ -23,10 +27,14 @@ if sys.stdout.encoding != "utf-8":
 
 
 def run_live_seat_extractor(visible: bool = False, pause: bool = False):
+    # 1. Create dedicated timestamped run folder
+    run_dir = create_run_directory(prefix="seat_analysis")
+    
     print("\n" + "=" * 90)
-    print("✈️  EASEMYTRIP REAL LIVE SEAT EXTRACTOR & PAYMENT AUDIT (ZERO SYNTHETIC DATA)")
+    print("✈️  EASEMYTRIP REAL LIVE SEAT EXTRACTOR & PAYMENT AUDIT")
     print("=" * 90)
-    print(f"  Mode: {'🖥️ Visible Chromium Window' if visible else '⚡ Fast Headless Engine'}")
+    print(f"  Mode:        {'🖥️ Visible Chromium Window' if visible else '⚡ Fast Headless Engine'}")
+    print(f"  Audit Run:   {run_dir}")
     print("=" * 90)
 
     with sync_playwright() as p:
@@ -50,6 +58,10 @@ def run_live_seat_extractor(visible: bool = False, pause: bool = False):
         page.goto(search_url, wait_until="domcontentloaded", timeout=45000)
         page.wait_for_timeout(6000)
 
+        # Save rendered search DOM
+        search_html = page.content()
+        save_run_artifact(run_dir, "search_results.html", search_html)
+
         # 1. Click Book Now
         print("[2/5] Navigating to Review/Checkout...")
         book_btn = page.query_selector("button:has-text('BOOK NOW'), a:has-text('BOOK NOW'), .btn-book, [class*='book-btn']")
@@ -64,6 +76,9 @@ def run_live_seat_extractor(visible: bool = False, pause: bool = False):
         checkout_page = context.pages[-1] if len(context.pages) > 1 else page
         checkout_page.wait_for_load_state("domcontentloaded")
         checkout_page.wait_for_timeout(3000)
+
+        # Save review DOM
+        save_run_artifact(run_dir, "checkout_review.html", checkout_page.content())
 
         # 2. Fill Guest Contact & Passenger info
         print("[3/5] Auto-filling passenger form...")
@@ -99,15 +114,12 @@ def run_live_seat_extractor(visible: bool = False, pause: bool = False):
         # 4. TARGET THE EXACT MODAL 'Let Me Choose Myself'
         print("[5/5] 🎯 Clicking 'Let Me Choose Myself' on Modal Popup...")
         
-        # Native Playwright locator
         choose_myself_locator = checkout_page.locator("text='Let Me Choose Myself'")
-        
         try:
             choose_myself_locator.wait_for(state="visible", timeout=6000)
             choose_myself_locator.click()
             print("  ✓ Clicked 'Let Me Choose Myself' on modal popup!")
         except Exception:
-            print("  * Using JavaScript click on 'Let Me Choose Myself'...")
             checkout_page.evaluate("""() => {
                 const els = Array.from(document.querySelectorAll('a, span, div, p'));
                 const target = els.find(el => (el.innerText || '').trim() === 'Let Me Choose Myself');
@@ -134,7 +146,6 @@ def run_live_seat_extractor(visible: bool = False, pause: bool = False):
                 const title = el.getAttribute('title') || el.innerText || '';
                 const cls = el.className || '';
 
-                // Clean real seat number from DOM ID (e.g. DEL_BOM9-D -> 9-D)
                 let seatNo = id.replace(/^[A-Z0-9]+_[A-Z0-9]+/, '');
                 if (!seatNo || seatNo.length < 2) {
                     seatNo = el.innerText.trim();
@@ -155,7 +166,6 @@ def run_live_seat_extractor(visible: bool = False, pause: bool = False):
                 return { error: "No selectable live seats found on active DOM" };
             }
 
-            // Click the first genuine available seat on the live plane
             const target = liveSeats[0];
             const domEl = document.querySelector(target.domSelector);
             if (domEl) {
@@ -171,8 +181,8 @@ def run_live_seat_extractor(visible: bool = False, pause: bool = False):
             };
         }""")
 
-        # Screenshot of the cabin seat map
-        screenshot_path = "aircraft_cabin_seat_map.png"
+        # Screenshot of the cabin seat map inside the run directory
+        screenshot_path = os.path.join(run_dir, "aircraft_cabin_seat_map.png")
         try:
             checkout_page.screenshot(path=screenshot_path, full_page=False)
             print(f"📸 Live Aircraft Cabin Seat Map Screenshot Captured -> {screenshot_path}")
@@ -193,9 +203,20 @@ def run_live_seat_extractor(visible: bool = False, pause: bool = False):
                 print(f"  * Seat: {s['seatNumber']:<8} | DOM ID: {s['rawDomId']:<15} | Class: {s['className']}")
             print("=" * 90 + "\n")
 
-            with open("real_live_seat_data.json", "w", encoding="utf-8") as f:
-                json.dump(real_seat_result, f, indent=2)
-            print("💾 100% Real Live Seat Data Saved -> real_live_seat_data.json\n")
+            save_run_artifact(run_dir, "real_live_seat_data.json", real_seat_result)
+            print(f"💾 100% Real Live Seat Data Saved -> {os.path.join(run_dir, 'real_live_seat_data.json')}\n")
+
+        # Save run summary metadata
+        summary_metadata = {
+            "run_timestamp": datetime.now().isoformat(),
+            "run_directory": run_dir,
+            "route": "DEL -> BOM",
+            "date": "30/08/2026",
+            "available_seats_count": real_seat_result.get("totalLiveAvailableSeats"),
+            "selected_seat": real_seat_result.get("clickedSeatNumber"),
+            "selected_dom_id": real_seat_result.get("clickedSeatRawId")
+        }
+        save_run_artifact(run_dir, "run_summary.json", summary_metadata)
 
         if pause and visible:
             print("⏸️  Browser window is PAUSED on your screen for 20 seconds so you can see the full seat map...")

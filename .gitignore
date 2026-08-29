@@ -7,8 +7,11 @@ __pycache__/
 data/airgo.db
 .env
 .DS_Store
+runs/
+*.html
+*.png
+*.json
 client/node_modules/
 client/dist/
-*.png
 test_*.json
 scratch/
