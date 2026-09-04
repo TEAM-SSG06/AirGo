@@ -20,8 +20,8 @@ from airgo.harvester.cleartrip_harvester import run_cleartrip_harvest
 def main():
     parser = argparse.ArgumentParser(description="AirGo Cleartrip Multi-Carrier Route Harvester")
     parser.add_argument("--top-n", type=int, default=1, help="Number of top DGCA routes to audit (default: 1)")
-    parser.add_argument("--horizons", type=str, default="1", help="Comma-separated advance horizons in days (e.g. 1,7,15,30,45)")
-    parser.add_argument("--flights-per-route", type=int, default=3, help="Number of flights per route-horizon with carrier diversity (default: 3)")
+    parser.add_argument("--horizons", type=str, default="1,7,15,30,45", help="Comma-separated advance horizons in days (default: 1,7,15,30,45)")
+    parser.add_argument("--flights-per-route", type=int, default=3, help="Number of checkout audits per route-horizon with carrier diversity (default: 3)")
     parser.add_argument("--csv", type=str, default="data/processed/dgca_top100_route_basket.csv", help="Path to DGCA route basket CSV")
 
     args = parser.parse_args()
