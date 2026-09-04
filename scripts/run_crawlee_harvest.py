@@ -23,6 +23,8 @@ def main():
     parser.add_argument("--top-n", type=int, default=1, help="Number of top DGCA routes to audit (default: 1)")
     parser.add_argument("--horizons", type=str, default="1", help="Comma-separated advance horizons in days (e.g. 1,7,15)")
     parser.add_argument("--flights-per-route", type=int, default=3, help="Number of flights per route-horizon with carrier diversity (default: 3)")
+    parser.add_argument("--checkout", action="store_true", default=False, help="Whether to enter deep checkout booking flow (default: False, page flow only)")
+    parser.add_argument("--browser", type=str, choices=["camoufox", "chromium", "msedge"], default="camoufox", help="Stealth browser engine (default: camoufox)")
     parser.add_argument("--concurrency", type=int, default=1, help="Maximum concurrent browser pages (default: 1)")
     parser.add_argument("--headless", action="store_true", default=True, help="Run headless (default: True)")
     parser.add_argument("--no-headless", action="store_false", dest="headless", help="Run browser in visible mode")
@@ -36,7 +38,9 @@ def main():
         platform=args.platform,
         flights_per_route=args.flights_per_route,
         max_concurrency=args.concurrency,
-        headless=args.headless
+        headless=args.headless,
+        checkout=args.checkout,
+        browser=args.browser
     )
 
     asyncio.run(
