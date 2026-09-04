@@ -1,10 +1,11 @@
 """
 AirGo Crawlee Multi-Platform Flight Harvesting Engine.
-Leverages Apify Crawlee for Python with:
-- PlaywrightCrawler and SessionPool management
-- BrowserForge anti-fingerprinting & stealth launch options
-- Concurrency scaling & automated request retry handling
-- Zero Dummy Data policy (raw DOM extraction and timestamped screenshot audits)
+Implements Apify Best Practices from docs.apify.com:
+1. PlaywrightCrawler with BrowserForge statistical anti-fingerprinting
+2. SessionPool session rotation & error score management (auto-retire on block/missing DOM)
+3. Presumption of failure: Presence of Proof verification on DOM data
+4. Progressive DOM hydration scrolling for full flight inventory retrieval
+5. Zero Dummy Data policy: raw observed DOM metrics and timestamped screenshot audits
 """
 
 import os
@@ -13,11 +14,14 @@ import io
 import re
 import csv
 import json
+import time
+import random
 import asyncio
 from datetime import datetime, date, timedelta
 from typing import List, Dict, Any, Optional
 
 from crawlee import Request, ConcurrencySettings
+from crawlee.sessions import SessionPool
 from crawlee.crawlers import PlaywrightCrawler, PlaywrightCrawlingContext
 
 from airgo.utils.run_manager import create_run_directory, save_run_artifact
@@ -70,7 +74,7 @@ def load_route_basket(csv_path: str, top_n: Optional[int] = None) -> List[Dict[s
 async def safe_capture_screenshot(page, file_path: str):
     """Resilient screenshot capture avoiding chromium texture buffer limits."""
     try:
-        await page.screenshot(path=file_path, full_page=False, timeout=10000)
+        await page.screenshot(path=file_path, full_page=False, timeout=12000)
     except Exception as e:
         print(f"  [⚠️ ] Screenshot capture warning for {os.path.basename(file_path)}: {e}")
 
@@ -213,8 +217,11 @@ async def extract_easemytrip_cards(page) -> List[Dict[str, Any]]:
 
 class CrawleeFlightHarvester:
     """
-    Crawlee-driven flight harvester managing session rotation, stealth fingerprinting,
-    and concurrent search page extraction across DGCA routes.
+    Production-ready Crawlee flight harvester adhering to Apify robustness guidelines:
+    - SessionPool with automatic retirement on challenge/block
+    - BrowserForge statistical fingerprinting & anti-bot evasion
+    - Progressive hydration scrolling for complete flight inventory extraction
+    - Zero Dummy Data and isolated audit artifact persistence
     """
 
     def __init__(
@@ -230,6 +237,7 @@ class CrawleeFlightHarvester:
         self.headless = headless
         self.audited_quotes: List[Dict[str, Any]] = []
         self.run_dir: str = ""
+        self.start_time: float = 0.0
 
     def build_requests(
         self,
@@ -279,19 +287,21 @@ class CrawleeFlightHarvester:
     async def run(
         self,
         csv_path: str,
-        top_n: int = 1,
-        horizons: List[int] = [1],
+        top_n: int = 2,
+        horizons: List[int] = [1, 7, 15],
     ) -> str:
         """Executes Crawlee-managed flight harvest."""
+        self.start_time = time.time()
         routes = load_route_basket(csv_path, top_n=top_n)
         self.run_dir = create_run_directory(f"crawlee_{self.platform}_top{top_n}")
 
         print("=" * 95)
         print(f"🚀 AIRGO CRAWLEE HARVESTER [{self.platform.upper()}]")
         print(f"   * Concurrency: Max {self.max_concurrency}")
-        print(f"   * Routes: {len(routes)} Top DGCA Routes")
+        print(f"   * Routes: {len(routes)} Top DGCA Routes ({', '.join(r['route'] for r in routes)})")
         print(f"   * Horizons: {[f'T+{h}' for h in horizons]}")
-        print(f"   * Audit Dir: {self.run_dir}")
+        print(f"   * Target Total Flights: {len(routes) * len(horizons) * self.flights_per_route}")
+        print(f"   * Audit Storage: {self.run_dir}")
         print("=" * 95)
 
         requests = self.build_requests(routes, horizons)
@@ -302,17 +312,21 @@ class CrawleeFlightHarvester:
             desired_concurrency=self.max_concurrency
         )
 
+        session_pool = SessionPool(max_pool_size=50)
+
         crawler = PlaywrightCrawler(
             headless=self.headless,
+            session_pool=session_pool,
             use_session_pool=True,
-            max_request_retries=3,
+            max_request_retries=5,
             concurrency_settings=concurrency_settings,
             browser_launch_options={
                 "channel": "msedge",
                 "args": [
                     "--disable-blink-features=AutomationControlled",
                     "--no-sandbox",
-                    "--disable-setuid-sandbox"
+                    "--disable-setuid-sandbox",
+                    "--disable-dev-shm-usage"
                 ]
             }
         )
@@ -329,25 +343,54 @@ class CrawleeFlightHarvester:
             rh_dir = os.path.join(self.run_dir, route_code, horizon_label)
             os.makedirs(rh_dir, exist_ok=True)
 
-            print(f"\n✈️  [{route_code}_{horizon_label}] Crawlee processing {platform.title()} URL...")
+            print(f"\n✈️  [{route_code}_{horizon_label}] Crawlee processing {platform.title()} ({req.url})...")
 
             try:
                 if platform == "cleartrip":
-                    await page.wait_for_selector("button:has-text('Book')", timeout=35000)
-                    await page.wait_for_timeout(2500)
+                    # Apify Presumption of Failure: verify presence of booking trigger
+                    await page.wait_for_selector("button:has-text('Book')", timeout=40000)
+                    await page.wait_for_timeout(2000)
+
+                    # Progressive hydration scroll to ensure full route inventory is loaded
+                    await page.evaluate("""async () => {
+                        const scrollHeight = document.body.scrollHeight || document.documentElement.scrollHeight;
+                        for (let y = 0; y < Math.min(scrollHeight, 4000); y += 500) {
+                            window.scrollBy(0, 500);
+                            await new Promise(r => setTimeout(r, 60));
+                        }
+                        window.scrollTo(0, 0);
+                    }""")
+                    await page.wait_for_timeout(1500)
+
                     cards = await extract_cleartrip_cards(page)
+
                 elif platform == "easemytrip":
-                    await page.wait_for_selector("div.fltResult, .fltResult, button:has-text('BOOK NOW')", timeout=35000)
-                    await page.wait_for_timeout(2500)
+                    await page.wait_for_selector("div.fltResult, .fltResult, button:has-text('BOOK NOW')", timeout=40000)
+                    await page.wait_for_timeout(2000)
+
+                    # Progressive hydration scroll
+                    await page.evaluate("""async () => {
+                        const scrollHeight = document.body.scrollHeight || document.documentElement.scrollHeight;
+                        for (let y = 0; y < Math.min(scrollHeight, 4000); y += 500) {
+                            window.scrollBy(0, 500);
+                            await new Promise(r => setTimeout(r, 60));
+                        }
+                        window.scrollTo(0, 0);
+                    }""")
+                    await page.wait_for_timeout(1500)
+
                     cards = await extract_easemytrip_cards(page)
                 else:
                     cards = []
 
+                # Proof verification check (Apify Academy principle)
                 if not cards:
-                    print(f"  [⚠️ ] {route_code}_{horizon_label}: No live flight cards found in DOM.")
+                    diag_shot = os.path.join(rh_dir, "failed_search_results.png")
+                    await safe_capture_screenshot(page, diag_shot)
+                    print(f"  [❌] {route_code}_{horizon_label}: No live flight cards found in DOM. Retiring session.")
                     if context.session:
                         context.session.retire()
-                    return
+                    raise RuntimeError(f"Flight inventory not rendered for {route_code}_{horizon_label}")
 
                 # Capture ground-truth screenshot proof
                 search_shot = os.path.join(rh_dir, "search_results.png")
@@ -399,6 +442,9 @@ class CrawleeFlightHarvester:
                     await context.push_data(quote)
                     print(f"    [✅] Extracted {flt['airline']:<20} ({flt['flightNumber']:<8}) | {flt['departureTime']}->{flt['arrivalTime']} | Fare: INR {flt['price']}")
 
+                # Polite human-like pacing between requests
+                await asyncio.sleep(random.uniform(2.5, 4.0))
+
             except Exception as e:
                 print(f"  [❌] Error processing {route_code}_{horizon_label}: {e}")
                 if context.session:
@@ -407,6 +453,23 @@ class CrawleeFlightHarvester:
 
         await crawler.run(requests)
 
+        duration = round(time.time() - self.start_time, 2)
+        summary = {
+            "platform": self.platform.title(),
+            "run_timestamp": datetime.utcnow().isoformat() + "Z",
+            "routes_audited": [r["route"] for r in routes],
+            "horizons": [f"T+{h}" for h in horizons],
+            "total_quotes_audited": len(self.audited_quotes),
+            "execution_duration_sec": duration,
+            "audit_directory": self.run_dir
+        }
+
         save_run_artifact(self.run_dir, "crawlee_audited_quotes.json", self.audited_quotes)
-        print(f"\n🎉 Crawlee Harvest Complete! Total Quotes Saved: {len(self.audited_quotes)}")
+        save_run_artifact(self.run_dir, "run_summary.json", summary)
+
+        print("=" * 95)
+        print(f"🎉 Crawlee Harvest Complete in {duration}s!")
+        print(f"   * Total Quotes Saved: {len(self.audited_quotes)}")
+        print(f"   * Run Summary: {os.path.join(self.run_dir, 'run_summary.json')}")
+        print("=" * 95)
         return self.run_dir
