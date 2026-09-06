@@ -2,9 +2,17 @@
 Database Migrations and Partitioning setup script for PostgreSQL airgo database.
 """
 
+import sys
 import logging
 from sqlalchemy import text
 from airgo.pipeline.db import engine, init_db
+
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+        sys.stderr.reconfigure(encoding='utf-8')
+    except Exception:
+        pass
 
 logger = logging.getLogger("AirGo.Migrations")
 
@@ -32,7 +40,7 @@ def run_migrations():
             # Verify declarative table structures and indexes
             logger.info("✅ PostgreSQL tables and indexes verified successfully.")
 
-    print("✅ Database schema migrations executed successfully.")
+    print("[OK] Database schema migrations executed successfully.")
 
 
 if __name__ == "__main__":

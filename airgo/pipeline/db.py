@@ -29,9 +29,13 @@ import os
 from urllib.parse import quote_plus
 from contextlib import contextmanager
 from typing import Generator
+from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 from airgo.pipeline.models import Base
+
+# Load environment variables from .env if present
+load_dotenv()
 
 # Read credentials from Environment Variables with defaults provided by User
 DB_USER = os.getenv("POSTGRES_USER", "rithish")
