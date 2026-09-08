@@ -5,11 +5,9 @@ and performs 1 representative checkout review per route/day.
 Adheres strictly to Zero Dummy Data and Visual Ground Truth policies.
 """
 
-import os
 import sys
 import io
 import json
-import re
 import urllib.parse
 import asyncio
 import tempfile
@@ -75,7 +73,7 @@ class HappyFaresScraper:
     def __init__(
         self,
         route: str = "BOM-DEL",
-        horizons: List[int] = None,
+        horizons: Optional[List[int]] = None,
         headless: bool = True,
         runs_dir: Optional[str] = None,
         pause_at_end: int = 15
@@ -117,7 +115,7 @@ class HappyFaresScraper:
         if not self.headless:
             args.extend(["--start-maximized", "--no-first-run", "--no-default-browser-check"])
 
-        launch_kwargs = {
+        launch_kwargs: Dict[str, Any] = {
             "user_data_dir": profile_dir,
             "channel": "chrome",
             "headless": self.headless,
@@ -626,7 +624,7 @@ class HappyFaresScraper:
             json.dump(summary_data, f, indent=2)
 
         print("\n" + "=" * 80)
-        print(f"[AirGo HappyFares Scraper] SCRAPING COMPLETE!")
+        print("[AirGo HappyFares Scraper] SCRAPING COMPLETE!")
         print(f"   * Total Quotes Captured : {len(all_quotes)}")
         print(f"   * Artifacts Folder      : {self.run_folder}")
         print(f"   * Quotes JSON           : {quotes_file.name}")
@@ -638,12 +636,10 @@ class HappyFaresScraper:
 
 def run_happyfares_scrape(
     route: str = "BOM-DEL",
-    horizons: List[int] = None,
+    horizons: List[int] = [1, 7, 15, 30, 45],
     headless: bool = True,
     pause_at_end: int = 15
 ) -> Dict[str, Any]:
-    if horizons is None:
-        horizons = [1, 7, 15, 30, 45]
     scraper = HappyFaresScraper(route=route, horizons=horizons, headless=headless, pause_at_end=pause_at_end)
     return asyncio.run(scraper.run())
 

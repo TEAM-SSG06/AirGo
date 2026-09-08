@@ -43,17 +43,20 @@ def check_db_connection() -> dict:
 def init_db():
     """Initializes and verifies the database connection and schema."""
     print("[AirGo] Connecting to Supabase PostgreSQL...")
-    db_status = check_db_connection()
-    ver = db_status["version"][:45]
-    print(f"[AirGo] Connected to PostgreSQL: {ver}... (Latency: {db_status['latency_ms']}ms)")
+    try:
+        db_status = check_db_connection()
+        ver = db_status["version"][:45]
+        print(f"[AirGo] Connected to PostgreSQL: {ver}... (Latency: {db_status['latency_ms']}ms)")
 
-    schema_file = Path(__file__).resolve().parent.parent / "schema.sql"
-    if schema_file.exists():
-        with open(schema_file, mode="r", encoding="utf-8") as f:
-            ddl = f.read()
-        with engine.connect() as conn:
-            conn.execute(text(ddl))
-            conn.commit()
-        print("[AirGo] Database schema verified and active.")
-    else:
-        print(f"[AirGo] Warning: {schema_file} not found.")
+        schema_file = Path(__file__).resolve().parent.parent / "schema.sql"
+        if schema_file.exists():
+            with open(schema_file, mode="r", encoding="utf-8") as f:
+                ddl = f.read()
+            with engine.connect() as conn:
+                conn.execute(text(ddl))
+                conn.commit()
+            print("[AirGo] Database schema verified and active.")
+        else:
+            print(f"[AirGo] Warning: {schema_file} not found.")
+    except Exception as e:
+        print(f"[AirGo] Warning: Database connection check failed: {e}")

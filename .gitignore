@@ -1,18 +1,38 @@
+# Python bytecode & cache
 __pycache__/
 *.py[cod]
 *$py.class
 .pytest_cache/
+.mypy_cache/
+
+# Virtual environments & IDEs
+.venv/
+.vscode/
+.DS_Store
+
+# Databases & Environment
 *.db
 *.sqlite3
 data/airgo.db
 .env
-.DS_Store
+
+# Audit runs & Scraper outputs
 runs/
 *.html
 *.png
-*.json
-client/node_modules/
-client/dist/
 test_*.json
 scratch/
 .skills_*.txt
+
+# Exclude generated JSON dumps, but allow project/client JSON configs & data
+*.json
+!pyrightconfig.json
+!client/package.json
+!client/package-lock.json
+!client/.oxlintrc.json
+!client/src/data/dgcaRouteBasket.json
+
+# Frontend
+client/node_modules/
+client/dist/
+

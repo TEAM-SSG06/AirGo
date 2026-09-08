@@ -1,9 +1,0 @@
-{
-  "run_timestamp": "2026-08-29T11:09:45.768926",
-  "run_directory": "runs\\2026-08-29_11-09-09_seat_analysis",
-  "route": "DEL -> BOM",
-  "date": "30/08/2026",
-  "available_seats_count": 74,
-  "selected_seat": "-B",
-  "selected_dom_id": "DEL_BOM10-B"
-}

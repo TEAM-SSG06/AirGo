@@ -56,3 +56,21 @@ Per **Rule 4** of the AirGo Project Guidelines:
   `runs/YYYY-MM-DD_HH-MM-SS_<prefix>/`
 * Preserves rendered HTML snapshots (`search_results.html`), high-resolution visual screenshots of displayed prices, and `run_summary.json` execution manifests.
 * Enables external auditors (MoSPI/RBI) to cross-reference every data point in PostgreSQL against raw live website captures.
+
+## 6. Ixigo Prototype Boundaries
+
+The Ixigo-only prototype checks `https://www.ixigo.com/robots.txt` before each
+new search path. A search is refused and recorded as `blocked` when the path is
+not allowed or the robots file cannot be read. Searches run sequentially with a
+configurable delay and jitter, using one standard Playwright browser context per
+route/window search; no proxy rotation, fingerprint spoofing, or CAPTCHA solving
+is attempted.
+
+For selected fare options, the prototype may traverse Ixigo's public booking
+funnel to the review/Pay Now landing page to observe a tax-inclusive price. It
+never enters card, CVV, or other payment fields and never submits payment. A
+CAPTCHA, block, sold-out result, or price change is recorded in the timestamped
+run artifacts as `blocked` or `unavailable`; it is not replaced with synthetic
+data. Ixigo results are currently written to `runs/*_ixigo_scrape/` as CSV,
+JSON, HTML, screenshots, and a run summary rather than inserted into the
+database.

@@ -37,3 +37,16 @@ These rules are **MANDATORY** for all AI coding agents working on the AirGo code
 ## 5. 📊 CLEAR SEPARATION OF OBSERVED VS COMPUTED METRICS
 - **Raw Observed Data**: Price tags, seat IDs, taxes, convenience fees extracted directly from the DOM must be stored and displayed without modification.
 - **Econometric / Statistical Models**: Any derived metrics (e.g., Econometric Expected Consumer Seat Surcharge, Flight Load Factor %, CPI Baskets) must be explicitly marked as computed models and separated from raw observed data points.
+
+---
+
+## 6. 🌐 BROWSER ENGINE: ALWAYS USE CHROME AND NEVER MSEDGE
+- **MANDATORY CHROME**: Always launch Google Chrome (or Chromium via Patchright/Playwright with `channel="chrome"` or standard Chromium executable).
+- **NEVER MSEDGE**: Under NO circumstances should Microsoft Edge (`msedge`) be launched or used as a browser channel.
+
+---
+
+## 7. 🛑 MANDATORY ARCHITECTURAL CLARITY BEFORE CODE
+- **STOP AND ASK**: If the architecture is not clear, or if there are scraper files scattered without a clear architecture, unified design pattern, or designated directory structure, the agent **MUST STOP immediately** and ask the user what to do and how to structure/fix it.
+- **NO SPRAWL OR AD-HOC SCATTERING**: Do not create, scatter, or dump uncoordinated scraper files or one-off scripts across random directories. Always align on the project structure, design patterns, and module architecture with the user before proceeding.
+
