@@ -35,6 +35,8 @@ import { PriceAnalyticsPage } from './pages/PriceAnalyticsPage';
 import { InflationPage } from './pages/InflationPage';
 import { RawDataPage } from './pages/RawDataPage';
 import { MethodologyPage } from './pages/MethodologyPage';
+import { BacktestingPage } from './pages/BacktestingPage';
+import { ApiAccessPage } from './pages/ApiAccessPage';
 
 function AppLayout() {
   return (
@@ -71,6 +73,8 @@ function AppLayout() {
             <Route path="/index/raw-data" element={<RawDataPage />} />
             <Route path="/index/data-quality" element={<DataQualityPage />} />
             <Route path="/index/methodology" element={<MethodologyPage />} />
+            <Route path="/index/backtesting" element={<BacktestingPage />} />
+            <Route path="/backtesting" element={<BacktestingPage />} />
 
             {/* Platform Feature Routes */}
             <Route path="/route-intelligence" element={<RouteIntelligencePage />} />
@@ -83,6 +87,8 @@ function AppLayout() {
             <Route path="/historical-data" element={<HistoricalDataPage />} />
             <Route path="/govt-reports" element={<GovtReportsPage />} />
             <Route path="/export-centre" element={<ExportCentrePage />} />
+            <Route path="/api-access" element={<ApiAccessPage />} />
+            <Route path="/index/api-access" element={<ApiAccessPage />} />
             <Route path="/users-roles" element={<UsersRolesPage />} />
             <Route path="/system-settings" element={<SystemSettingsPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />

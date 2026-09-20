@@ -1,0 +1,202 @@
+[
+  {
+    "rank": 1,
+    "route": "BOM-DEL",
+    "city1": "Mumbai",
+    "city2": "Delhi",
+    "total_pax": 6850869,
+    "weight_traffic_within_basket": 0.058516,
+    "share_of_national_traffic": 0.041385,
+    "tier": "Tier 1"
+  },
+  {
+    "rank": 2,
+    "route": "BLR-DEL",
+    "city1": "Bengaluru",
+    "city2": "Delhi",
+    "total_pax": 4681042,
+    "weight_traffic_within_basket": 0.039983,
+    "share_of_national_traffic": 0.028277,
+    "tier": "Tier 1"
+  },
+  {
+    "rank": 3,
+    "route": "BLR-BOM",
+    "city1": "Bengaluru",
+    "city2": "Mumbai",
+    "total_pax": 4114574,
+    "weight_traffic_within_basket": 0.035144,
+    "share_of_national_traffic": 0.024855,
+    "tier": "Tier 1"
+  },
+  {
+    "rank": 4,
+    "route": "DEL-HYD",
+    "city1": "Delhi",
+    "city2": "Hyderabad",
+    "total_pax": 3295918,
+    "weight_traffic_within_basket": 0.028152,
+    "share_of_national_traffic": 0.01991,
+    "tier": "Tier 1"
+  },
+  {
+    "rank": 5,
+    "route": "DEL-PNQ",
+    "city1": "Delhi",
+    "city2": "Pune",
+    "total_pax": 2924045,
+    "weight_traffic_within_basket": 0.024975,
+    "share_of_national_traffic": 0.017663,
+    "tier": "Tier 1"
+  },
+  {
+    "rank": 6,
+    "route": "CCU-DEL",
+    "city1": "Kolkata",
+    "city2": "Delhi",
+    "total_pax": 2770386,
+    "weight_traffic_within_basket": 0.023663,
+    "share_of_national_traffic": 0.016735,
+    "tier": "Tier 1"
+  },
+  {
+    "rank": 7,
+    "route": "DEL-GOI",
+    "city1": "Delhi",
+    "city2": "Goa",
+    "total_pax": 2567403,
+    "weight_traffic_within_basket": 0.021929,
+    "share_of_national_traffic": 0.015509,
+    "tier": "Tier 1"
+  },
+  {
+    "rank": 8,
+    "route": "AMD-DEL",
+    "city1": "Ahmedabad",
+    "city2": "Delhi",
+    "total_pax": 2537042,
+    "weight_traffic_within_basket": 0.02167,
+    "share_of_national_traffic": 0.015326,
+    "tier": "Tier 1"
+  },
+  {
+    "rank": 9,
+    "route": "BOM-GOI",
+    "city1": "Mumbai",
+    "city2": "Goa",
+    "total_pax": 2482241,
+    "weight_traffic_within_basket": 0.021202,
+    "share_of_national_traffic": 0.014995,
+    "tier": "Tier 1"
+  },
+  {
+    "rank": 10,
+    "route": "DEL-MAA",
+    "city1": "Delhi",
+    "city2": "Chennai",
+    "total_pax": 2452761,
+    "weight_traffic_within_basket": 0.02095,
+    "share_of_national_traffic": 0.014817,
+    "tier": "Tier 1"
+  },
+  {
+    "rank": 11,
+    "route": "BOM-HYD",
+    "city1": "Mumbai",
+    "city2": "Hyderabad",
+    "total_pax": 2353279,
+    "weight_traffic_within_basket": 0.0201,
+    "share_of_national_traffic": 0.014216,
+    "tier": "Tier 1"
+  },
+  {
+    "rank": 12,
+    "route": "BLR-CCU",
+    "city1": "Bengaluru",
+    "city2": "Kolkata",
+    "total_pax": 2326980,
+    "weight_traffic_within_basket": 0.019876,
+    "share_of_national_traffic": 0.014057,
+    "tier": "Tier 1"
+  },
+  {
+    "rank": 13,
+    "route": "DEL-SXR",
+    "city1": "Delhi",
+    "city2": "Srinagar",
+    "total_pax": 2315422,
+    "weight_traffic_within_basket": 0.019777,
+    "share_of_national_traffic": 0.013987,
+    "tier": "Tier 1"
+  },
+  {
+    "rank": 14,
+    "route": "BLR-HYD",
+    "city1": "Bengaluru",
+    "city2": "Hyderabad",
+    "total_pax": 2293602,
+    "weight_traffic_within_basket": 0.019591,
+    "share_of_national_traffic": 0.013855,
+    "tier": "Tier 1"
+  },
+  {
+    "rank": 15,
+    "route": "BOM-CCU",
+    "city1": "Mumbai",
+    "city2": "Kolkata",
+    "total_pax": 2166364,
+    "weight_traffic_within_basket": 0.018504,
+    "share_of_national_traffic": 0.013087,
+    "tier": "Tier 1"
+  },
+  {
+    "rank": 16,
+    "route": "BOM-MAA",
+    "city1": "Mumbai",
+    "city2": "Chennai",
+    "total_pax": 2112927,
+    "weight_traffic_within_basket": 0.018047,
+    "share_of_national_traffic": 0.012764,
+    "tier": "Tier 2"
+  },
+  {
+    "rank": 17,
+    "route": "AMD-BOM",
+    "city1": "Ahmedabad",
+    "city2": "Mumbai",
+    "total_pax": 2101443,
+    "weight_traffic_within_basket": 0.017949,
+    "share_of_national_traffic": 0.012694,
+    "tier": "Tier 2"
+  },
+  {
+    "rank": 18,
+    "route": "BLR-PNQ",
+    "city1": "Bengaluru",
+    "city2": "Pune",
+    "total_pax": 1881109,
+    "weight_traffic_within_basket": 0.016067,
+    "share_of_national_traffic": 0.011363,
+    "tier": "Tier 2"
+  },
+  {
+    "rank": 19,
+    "route": "BLR-GOI",
+    "city1": "Bengaluru",
+    "city2": "Goa",
+    "total_pax": 1698967,
+    "weight_traffic_within_basket": 0.014512,
+    "share_of_national_traffic": 0.010263,
+    "tier": "Tier 2"
+  },
+  {
+    "rank": 20,
+    "route": "HYD-MAA",
+    "city1": "Hyderabad",
+    "city2": "Chennai",
+    "total_pax": 1573825,
+    "weight_traffic_within_basket": 0.013443,
+    "share_of_national_traffic": 0.009507,
+    "tier": "Tier 2"
+  }
+]

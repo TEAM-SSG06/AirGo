@@ -28,10 +28,16 @@ export const Header = () => {
         return { title: 'Data Quality & Zero-Dummy Assurance', crumb: 'Data Quality' };
       case '/historical-data':
         return { title: 'Historical Airfare & CPI Time Series', crumb: 'Historical Data' };
+      case '/backtesting':
+      case '/index/backtesting':
+        return { title: 'Econometric Back-Testing & Validation', crumb: 'Backtesting' };
       case '/govt-reports':
         return { title: 'Government & Regulatory Reports', crumb: 'Government Reports' };
       case '/export-centre':
         return { title: 'Data Export Centre', crumb: 'Export Centre' };
+      case '/api-access':
+      case '/index/api-access':
+        return { title: 'Government API Gateway & Management', crumb: 'API Management' };
       case '/users-roles':
         return { title: 'Users & Roles (RBAC Management)', crumb: 'Users & Roles' };
       case '/system-settings':

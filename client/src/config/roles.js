@@ -16,7 +16,8 @@ import {
   Layers,
   Plane,
   Calendar,
-  BookOpen
+  BookOpen,
+  Key
 } from 'lucide-react';
 
 export const USER_ROLES = {
@@ -53,6 +54,7 @@ export const USER_ROLES = {
           { id: 'raw_data', label: 'Raw Observations Log', icon: Database, path: '/index/raw-data' },
           { id: 'data_quality', label: 'Data Quality Assurance', icon: CheckCircle2, path: '/index/data-quality' },
           { id: 'methodology', label: 'Index Methodology', icon: BookOpen, path: '/index/methodology' },
+          { id: 'backtesting', label: 'Backtesting & Validation', icon: History, path: '/backtesting' },
           { id: 'scraping_monitor', label: 'Scraping Monitor', icon: Activity, path: '/scraping-monitor' }
         ]
       },
@@ -60,7 +62,8 @@ export const USER_ROLES = {
         title: 'REPORTS & EXPORTS',
         items: [
           { id: 'govt_reports', label: 'Government Reports', icon: FileText, path: '/govt-reports' },
-          { id: 'export_centre', label: 'Export Centre', icon: Download, path: '/export-centre' }
+          { id: 'export_centre', label: 'Export Centre', icon: Download, path: '/export-centre' },
+          { id: 'api_access', label: 'Government API Gateway', icon: Key, path: '/api-access' }
         ]
       },
       {
@@ -93,6 +96,7 @@ export const USER_ROLES = {
         items: [
           { id: 'routes_index', label: 'Corridor Index & Heatmap', icon: Scale, path: '/index/routes' },
           { id: 'booking_window', label: 'T+1 Surge Window Audit', icon: Calendar, path: '/index/booking-window' },
+          { id: 'backtesting', label: 'DGCA Tariff Backtesting', icon: History, path: '/backtesting' },
           { id: 'platform_analytics', label: 'Direct vs OTA Fee Spreads', icon: BarChart3, path: '/index/platforms' },
           { id: 'anomaly_detection', label: 'Surge Price Anomalies', icon: AlertTriangle, path: '/anomaly-detection', badge: '12' }
         ]
@@ -109,7 +113,8 @@ export const USER_ROLES = {
         title: 'REPORTS',
         items: [
           { id: 'govt_reports', label: 'DGCA Tariff Reports', icon: FileText, path: '/govt-reports' },
-          { id: 'export_centre', label: 'Compliance Audit Exports', icon: Download, path: '/export-centre' }
+          { id: 'export_centre', label: 'Compliance Audit Exports', icon: Download, path: '/export-centre' },
+          { id: 'api_access', label: 'DGCA API Gateway Feeds', icon: Key, path: '/api-access' }
         ]
       }
     ]
@@ -142,9 +147,11 @@ export const USER_ROLES = {
         title: 'FORECASTING & METHODOLOGY',
         items: [
           { id: 'methodology', label: 'Econometric Methodology', icon: BookOpen, path: '/index/methodology' },
+          { id: 'backtesting', label: '30-Day Model Backtesting (CPI)', icon: History, path: '/backtesting' },
           { id: 'historical_data', label: 'Monthly CPI Historical Comparison', icon: History, path: '/historical-data' },
           { id: 'govt_reports', label: 'Monetary Policy Committee Reports', icon: FileText, path: '/govt-reports' },
-          { id: 'export_centre', label: 'RBI Macro Data Feeds', icon: Download, path: '/export-centre' }
+          { id: 'export_centre', label: 'RBI Macro Data Feeds', icon: Download, path: '/export-centre' },
+          { id: 'api_access', label: 'RBI Nowcasting API Gateway', icon: Key, path: '/api-access' }
         ]
       }
     ]

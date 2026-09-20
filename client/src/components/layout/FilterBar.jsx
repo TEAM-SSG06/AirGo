@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useFilters } from '../../context/FilterContext';
 import { 
   Filter, 
@@ -10,14 +11,23 @@ import {
   Building2, 
   Tag, 
   Layers, 
-  Check,
-  SlidersHorizontal,
-  Sparkles
+  Check, 
+  SlidersHorizontal, 
+  Sparkles 
 } from 'lucide-react';
 
 export const FilterBar = () => {
+  const location = useLocation();
   const { filters, updateFilter, resetFilters } = useFilters();
   const [activeDropdown, setActiveDropdown] = useState(null);
+
+  // FilterBar is ONLY relevant on the main executive Overview / Dashboard.
+  // It is explicitly removed from all other pages (Backtesting, API Access, Methodology, 
+  // Scrapers, Data Quality, Reports, Settings, Users, etc.) where localized controls exist.
+  const ALLOWED_PATHS = ['/', '/dashboard', '/airfare-index'];
+  if (!ALLOWED_PATHS.includes(location.pathname)) {
+    return null;
+  }
 
   const toggleDropdown = (name) => {
     setActiveDropdown(activeDropdown === name ? null : name);
