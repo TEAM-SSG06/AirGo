@@ -39,6 +39,8 @@ import { RouteDetailPage } from './pages/RouteDetailPage';
 import { GroundTruthAuditModal } from './components/scraper/GroundTruthAuditModal';
 import { HeadlessDemoRunnerModal } from './components/scraper/HeadlessDemoRunnerModal';
 
+import { ThemeProvider } from './context/ThemeContext';
+
 function AppLayout() {
   const { 
     isAuditOpen, 
@@ -51,7 +53,7 @@ function AppLayout() {
   } = useAuditModal();
 
   return (
-    <div className="flex min-h-screen bg-[#f8fafc] text-slate-900 font-sans antialiased">
+    <div className="flex min-h-screen bg-[#f8fafc] dark:bg-[#090d16] text-slate-900 dark:text-slate-100 font-sans antialiased transition-colors duration-200">
       {/* Streamlined Left Navigation Sidebar */}
       <Sidebar />
 
@@ -119,7 +121,7 @@ function AppLayout() {
           </Routes>
 
           {/* Institutional Compliance Footer */}
-          <footer className="text-center text-[11px] text-slate-400 py-4 border-t border-slate-200/60 mt-10">
+          <footer className="text-center text-[11px] text-slate-400 dark:text-slate-500 py-4 border-t border-slate-200/60 dark:border-slate-800/80 mt-10">
             SIH26056: Real-time Airfare Price Index for India · Ministry of Statistics & Programme Implementation (MoSPI) · Directorate General of Civil Aviation (DGCA)
           </footer>
         </main>
@@ -151,19 +153,21 @@ function AppLayout() {
 function App() {
   return (
     <BrowserRouter>
-      <RoleProvider>
-        <FilterProvider>
-          <AuditModalProvider>
-            <Routes>
-              {/* Public Institutional Landing Page (Full-Width) */}
-              <Route path="/" element={<LandingPage />} />
+      <ThemeProvider>
+        <RoleProvider>
+          <FilterProvider>
+            <AuditModalProvider>
+              <Routes>
+                {/* Public Institutional Landing Page (Full-Width) */}
+                <Route path="/" element={<LandingPage />} />
 
-              {/* Operational Platform Terminal Suite */}
-              <Route path="/*" element={<AppLayout />} />
-            </Routes>
-          </AuditModalProvider>
-        </FilterProvider>
-      </RoleProvider>
+                {/* Operational Platform Terminal Suite */}
+                <Route path="/*" element={<AppLayout />} />
+              </Routes>
+            </AuditModalProvider>
+          </FilterProvider>
+        </RoleProvider>
+      </ThemeProvider>
     </BrowserRouter>
   );
 }

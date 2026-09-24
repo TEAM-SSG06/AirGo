@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, Sparkles, Menu, X, ExternalLink } from "lucide-react";
+import { ArrowRight, Sparkles, Menu, X, ExternalLink, Sun, Moon } from "lucide-react";
+import { useTheme } from "../../context/ThemeContext";
 
 export const LandingNavbar = () => {
   const navigate = useNavigate();
+  const { isDark, toggleTheme } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -36,8 +38,8 @@ export const LandingNavbar = () => {
     <header
       className={`sticky top-0 z-50 w-full transition-all duration-200 ${
         isScrolled
-          ? "bg-white/95 backdrop-blur-md border-b border-slate-200/90 shadow-xs"
-          : "bg-white/90 backdrop-blur-sm border-b border-slate-200/60"
+          ? "bg-white/95 dark:bg-[#0d1322]/95 backdrop-blur-md border-b border-slate-200/90 dark:border-slate-800 shadow-xs"
+          : "bg-white/90 dark:bg-[#0d1322]/90 backdrop-blur-sm border-b border-slate-200/60 dark:border-slate-800/60"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -47,49 +49,59 @@ export const LandingNavbar = () => {
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             className="flex items-center gap-2.5 sm:gap-3 cursor-pointer group select-none"
           >
-            <div className="w-8.5 h-8.5 sm:w-9 sm:h-9 rounded-lg bg-slate-950 text-white flex items-center justify-center font-bold text-xs sm:text-sm tracking-wider shadow-xs group-hover:bg-blue-600 transition-colors">
+            <div className="w-8.5 h-8.5 sm:w-9 sm:h-9 rounded-lg bg-slate-950 dark:bg-blue-600 text-white flex items-center justify-center font-bold text-xs sm:text-sm tracking-wider shadow-xs group-hover:bg-blue-600 transition-colors">
               AG
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="font-bold text-slate-900 text-sm sm:text-base tracking-tight group-hover:text-blue-600 transition-colors whitespace-nowrap">
+                <span className="font-bold text-slate-900 dark:text-white text-sm sm:text-base tracking-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors whitespace-nowrap">
                   AirGo
                 </span>
-                <span className="inline-flex items-center px-1.5 py-0.2 rounded text-[9.5px] font-semibold bg-blue-50 text-blue-700 border border-blue-200/60">
+                <span className="inline-flex items-center px-1.5 py-0.2 rounded text-[9.5px] font-semibold bg-blue-50 dark:bg-blue-950/80 text-blue-700 dark:text-blue-300 border border-blue-200/60 dark:border-blue-800/80">
                   APIx
                 </span>
               </div>
-              <p className="text-[10px] sm:text-[11px] text-slate-500 font-medium leading-none mt-0.5 whitespace-nowrap">
+              <p className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-none mt-0.5 whitespace-nowrap">
                 India Airfare Price Index Platform
               </p>
             </div>
           </div>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-6 text-[13px] font-medium text-slate-600">
+          <nav className="hidden lg:flex items-center gap-6 text-[13px] font-medium text-slate-600 dark:text-slate-300">
             {navLinks.map((link) => (
               <a
                 key={link.name}
                 href={link.href}
                 onClick={(e) => handleNavClick(e, link.href)}
-                className={`py-1 transition-colors hover:text-blue-600 ${
-                  link.hasSparkle ? "inline-flex items-center gap-1 text-blue-600 font-semibold" : ""
+                className={`py-1 transition-colors hover:text-blue-600 dark:hover:text-blue-400 ${
+                  link.hasSparkle ? "inline-flex items-center gap-1 text-blue-600 dark:text-blue-400 font-semibold" : ""
                 }`}
               >
-                {link.hasSparkle && <Sparkles className="w-3.5 h-3.5 text-blue-600" />}
+                {link.hasSparkle && <Sparkles className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />}
                 <span>{link.name}</span>
               </a>
             ))}
             <button
               onClick={() => navigate("/index-methodology")}
-              className="py-1 text-slate-600 hover:text-blue-600 transition-colors cursor-pointer"
+              className="py-1 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer"
             >
               Methodology
             </button>
           </nav>
 
-          {/* Action CTA & Mobile Hamburger */}
+          {/* Action CTA & Dark Mode Toggle & Mobile Hamburger */}
           <div className="flex items-center gap-2 sm:gap-2.5">
+            {/* Dark Mode Toggle */}
+            <button
+              onClick={toggleTheme}
+              title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+              className="p-1.5 sm:p-2 rounded-lg text-slate-600 dark:text-amber-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+              aria-label="Toggle theme"
+            >
+              {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-600" />}
+            </button>
+
             <button
               onClick={() => navigate("/dashboard")}
               className="flex items-center gap-1.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-lg bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white text-xs sm:text-[13px] font-medium shadow-xs hover:shadow transition-all cursor-pointer group whitespace-nowrap"
@@ -101,7 +113,7 @@ export const LandingNavbar = () => {
             {/* Mobile Toggle Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-1.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
+              className="lg:hidden p-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
               aria-label="Toggle navigation menu"
             >
               {mobileMenuOpen ? <X className="w-4.5 h-4.5" /> : <Menu className="w-4.5 h-4.5" />}

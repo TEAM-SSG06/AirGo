@@ -14,7 +14,7 @@ export const LandingPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 font-sans antialiased selection:bg-blue-600 selection:text-white">
+    <div className="min-h-screen bg-white dark:bg-[#080c14] text-slate-900 dark:text-slate-100 font-sans antialiased selection:bg-blue-600 selection:text-white transition-colors duration-200">
       {/* 1. Header Navigation */}
       <LandingNavbar />
 
